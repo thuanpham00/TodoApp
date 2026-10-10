@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Dark mode theo class trên <html> (bật/tắt từ Cài đặt). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Token nền tảng (bộ màu AuthKit). */
+  --background: #f4f4f6;
+  --foreground: #2c2c2c;
+  --surface: #ffffff;
+  --border: #eff0f0;
+  --border-card: transparent;
+  --muted: #828282;
+
+  /* Brand / màu chủ đạo do người dùng chọn — set lại trong use-settings. */
+  --brand: #0f172a;
+  --brand-hover: #1e293b;
+
+  /* Token chuẩn shadcn map về palette trên (dùng cho components/ui). */
+  --radius: 0.625rem;
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: var(--brand);
+  --primary-foreground: #ffffff;
+  --secondary: var(--background);
+  --secondary-foreground: var(--foreground);
+  --muted-foreground: var(--muted);
+  --accent: var(--background);
+  --accent-foreground: var(--foreground);
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
+  --input: var(--border);
+  --ring: var(--brand);
+}
+
+/* Dark mode — phong cách AuthKit (WorkOS). Các token shadcn ở trên tham chiếu
+   biến themed (--surface/--background/...) nên tự đổi theo. */
+.dark {
+  --background: #05060f;
+  --foreground: #e9edf5;
+  --surface: #0f111a;
+  --border: rgba(160, 180, 220, 0.1);
+  --border-card: rgba(160, 180, 220, 0.08);
+  --muted: #8b93a7;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-border-card: var(--border-card);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+body {
+  /* Mặc định nền trơn theo token. Khi chọn ảnh, use-settings set
+     body.style.backgroundImage (layer ảnh) đè lên màu nền. */
+  background-color: var(--background);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family:
+    "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+.dark body {
+  color: var(--foreground);
+}
+
+/* Theming cho react-day-picker (Calendar) — override stylesheet gốc theo brand. */
+.rdp-themed {
+  --rdp-accent-color: var(--brand);
+  --rdp-accent-background-color: color-mix(in srgb, var(--brand) 14%, transparent);
+  --rdp-today-color: var(--brand);
+  --rdp-day_button-border-radius: 0.5rem;
+  --rdp-day_button-width: 40px;
+  --rdp-day_button-height: 40px;
+  --rdp-outside-opacity: 0.4;
+  --rdp-disabled-opacity: 0.4;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.rdp-themed .rdp-day_button:hover:not([disabled]) {
+  background-color: var(--background);
+}
+
+.rdp-themed .rdp-selected {
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.rdp-themed .rdp-selected .rdp-day_button {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.rdp-themed .rdp-weekday {
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: none;
+}
+
+/* Ẩn hoàn toàn scrollbar nhưng vẫn scroll được. */
+.scrollbar-clean {
+  scrollbar-width: none;
+}
+
+.scrollbar-clean::-webkit-scrollbar {
+  display: none;
+}
+
