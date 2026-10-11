@@ -32,10 +32,14 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        // Mobile: full-screen sheet (an toàn với safe-area).
-        "fixed inset-0 z-50 flex w-full max-w-none flex-col gap-4 overflow-y-auto rounded-none border border-border bg-surface p-4 pt-safe shadow-2xl duration-200",
-        // Desktop: modal centered giới hạn chiều rộng.
-        "sm:inset-auto sm:left-1/2 sm:top-1/2 sm:max-h-[90vh] sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:p-6",
+        // Mobile: full-screen sheet (an toàn với safe-area). p-4 shorthand
+        // nên padding-top phải dùng !pt-safe đứng sau để thắng. scrollbar-clean
+        // ẩn scrollbar native trên iOS/Android nhưng vẫn scroll được.
+        "fixed inset-0 z-50 flex w-full max-w-none flex-col gap-4 overflow-y-auto scrollbar-clean rounded-none border border-border bg-surface p-4 !pt-safe shadow-2xl duration-200",
+        // Desktop: modal centered. sm:p-6 set shorthand (đè padding riêng),
+        // nên padding-top phải dùng sm:pt-8 đứng SAU sm:p-6 để Tailwind
+        // merge ưu tiên longhand.
+        "sm:inset-auto sm:left-1/2 sm:top-1/2 sm:max-h-[90vh] sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:p-6 sm:!pt-8",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         className,
       )}

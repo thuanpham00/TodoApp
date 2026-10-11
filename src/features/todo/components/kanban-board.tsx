@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { parseIsoDate, getTodayIso } from "../../../utils/date";
 import { cn } from "../../../utils/cn";
 import Button from "../../../components/button/button";
@@ -36,39 +36,6 @@ export default function KanbanBoard({
   const formattedDate = `${String(selectedDateObj.getDate()).padStart(2, "0")}/${String(selectedDateObj.getMonth() + 1).padStart(2, "0")}/${selectedDateObj.getFullYear()}`;
 
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Theo dõi cột đang "snap" trong viewport để hiển thị dot indicator.
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    function update(): void {
-      const children = Array.from(el!.children) as HTMLElement[];
-      if (children.length === 0) return;
-      const scrollLeft = el!.scrollLeft;
-      const viewportCenter = scrollLeft + el!.clientWidth / 2;
-      let closest = 0;
-      let minDist = Number.POSITIVE_INFINITY;
-      children.forEach((child, index) => {
-        const center = child.offsetLeft + child.offsetWidth / 2;
-        const dist = Math.abs(center - viewportCenter);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = index;
-        }
-      });
-      setActiveIndex(closest);
-    }
-
-    update();
-    el.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      el.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, [visibleColumns.length]);
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col gap-2">
@@ -96,8 +63,8 @@ export default function KanbanBoard({
         {visibleColumns.map((column, index) => (
           <div
             key={column.key}
-            className="min-h-[60vh] min-w-0 snap-center sm:min-h-0 sm:min-w-72 md:min-w-80"
-            style={{ flexBasis: 0, flexGrow: 1, flexShrink: 0 }}
+            className="min-h-[60vh] min-w-0 snap-center sm:min-h-0"
+            style={{ flexBasis: 0, flexGrow: 1, flexShrink: 1 }}
             data-index={index}
           >
             <KanbanColumn
@@ -111,25 +78,6 @@ export default function KanbanBoard({
         ))}
       </div>
 
-      {/* Dot indicator — chỉ dùng khi các cột xếp ngang (sm trở lên) */}
-      {visibleColumns.length > 1 && (
-        <div
-          className="hidden items-center justify-center gap-1.5 sm:flex"
-          aria-hidden="true"
-        >
-          {visibleColumns.map((column, index) => (
-            <span
-              key={column.key}
-              className={cn(
-                "h-1.5 rounded-full transition-all",
-                index === activeIndex
-                  ? "w-5 bg-brand"
-                  : "w-1.5 bg-muted-foreground/30",
-              )}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

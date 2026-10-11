@@ -51,8 +51,8 @@ export default function DashboardPage() {
           </Button>
         </header>
 
-        <div className="grid gap-3 lg:flex-1 lg:grid-cols-3">
-          <div className="order-1 flex min-h-0 flex-col lg:col-span-2 lg:h-full">
+        <div className="grid gap-3 lg:flex-1 lg:grid-cols-[4fr_1fr]">
+          <div className="order-1 flex min-h-0 flex-col lg:h-full">
             <TodoWidget />
           </div>
           <div className="order-2 flex min-h-0 flex-col gap-3 lg:order-2 lg:h-full">
