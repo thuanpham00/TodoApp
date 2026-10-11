@@ -103,12 +103,16 @@ body {
 }
 
 body {
-  /* Mặc định nền trơn theo token. Khi chọn ảnh, use-settings set
-     body.style.backgroundImage (layer ảnh) đè lên màu nền. */
+  /* Mặc định nền trơn theo token. Khi chọn ảnh, use-settings set biến
+     --bg-image để layer ảnh đè lên màu nền (nhất quán Safari mobile + PWA). */
+  --bg-image: none;
   background-color: var(--background);
+  background-image: var(--bg-image);
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 100dvh;
   color: var(--foreground);
   font-family:
     "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI",

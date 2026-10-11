@@ -64,7 +64,10 @@ export function useSettings(): UseSettingsResult {
 
   useEffect(() => {
     const url = getBackgroundUrl(settings.background);
-    document.body.style.backgroundImage = url ? `url("${url}")` : "";
+    document.body.style.setProperty(
+      "--bg-image",
+      url ? `url("${url}")` : "none",
+    );
   }, [settings.background]);
 
   const update = useCallback(
