@@ -38,15 +38,25 @@ function isAccentKey(v: string): v is AccentColorKey {
   );
 }
 
-function settingsToPatch(settings: Settings): Partial<SettingsRow> {
-  return {
-    board_name: settings.boardName,
-    theme: isThemeMode(settings.theme) ? settings.theme : DEFAULT_SETTINGS.theme,
-    accent_color: isAccentKey(settings.accentColor)
-      ? settings.accentColor
-      : DEFAULT_SETTINGS.accentColor,
-    background: settings.background,
-  };
+function patchToRow(patch: Partial<Settings>): Partial<SettingsRow> {
+  const row: Partial<SettingsRow> = {};
+
+  if (patch.boardName !== undefined) {
+    row.board_name = patch.boardName;
+  }
+  if (patch.theme !== undefined) {
+    row.theme = isThemeMode(patch.theme) ? patch.theme : DEFAULT_SETTINGS.theme;
+  }
+  if (patch.accentColor !== undefined) {
+    row.accent_color = isAccentKey(patch.accentColor)
+      ? patch.accentColor
+      : DEFAULT_SETTINGS.accentColor;
+  }
+  if (patch.background !== undefined) {
+    row.background = patch.background;
+  }
+
+  return row;
 }
 
 export async function fetchSettings(): Promise<Settings> {
@@ -62,9 +72,12 @@ export async function fetchSettings(): Promise<Settings> {
 }
 
 export async function updateSettings(patch: Partial<Settings>): Promise<void> {
+  const row = patchToRow(patch);
+  if (Object.keys(row).length === 0) return;
+
   const { error } = await supabase
     .from("settings")
-    .update(settingsToPatch({ ...DEFAULT_SETTINGS, ...patch }))
+    .update(row)
     .eq("id", 1);
 
   if (error) throw error;
