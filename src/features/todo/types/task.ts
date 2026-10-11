@@ -13,6 +13,8 @@ export interface Task {
   status: TaskStatus;
   important: boolean;
   scope: TaskScope;
+  /** Ước lượng thời gian hoàn thành (phút), null = không ước lượng. */
+  estimateMinutes: number | null;
   createdAt: string; // ISO datetime
   completedAt: string | null;
 }

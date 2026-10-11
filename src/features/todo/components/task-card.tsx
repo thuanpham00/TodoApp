@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Flame,
   Pencil,
+  Timer,
   Trash2,
 } from "lucide-react";
 import IconButton from "../../../components/icon-button/icon-button";
@@ -14,6 +15,7 @@ import {
 } from "../constants/kanban-columns";
 import type { Task } from "../types/task";
 import { formatDueBadge } from "../utils/task-date";
+import { formatEstimate } from "../utils/format-estimate";
 
 type MoveDirection = "prev" | "next";
 
@@ -66,6 +68,12 @@ export default function TaskCard({
         {task.scope && (
           <span className="flex w-fit items-center rounded-md bg-orange-100 px-2 py-1 text-xs font-medium text-orange-600">
             {task.scope === "week" ? "Tuần này" : "Tháng này"}
+          </span>
+        )}
+        {task.estimateMinutes && (
+          <span className="flex w-fit items-center gap-1 rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-600">
+            <Timer className="h-3 w-3 shrink-0" />
+            {formatEstimate(task.estimateMinutes)}
           </span>
         )}
       </div>

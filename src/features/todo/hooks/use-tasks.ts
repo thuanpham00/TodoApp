@@ -24,6 +24,7 @@ interface AddTaskInput {
   status?: TaskStatus;
   important?: boolean;
   scope?: TaskScope;
+  estimateMinutes?: number | null;
 }
 
 interface EditTaskInput {
@@ -34,6 +35,7 @@ interface EditTaskInput {
   status: TaskStatus;
   important: boolean;
   scope: TaskScope;
+  estimateMinutes: number | null;
 }
 
 type TasksByStatus = Record<TaskStatus, Task[]>;
@@ -218,6 +220,7 @@ export function useTasks(): UseTasksResult {
       status = "todo",
       important = false,
       scope = null,
+      estimateMinutes = null,
     }: AddTaskInput): Promise<void> {
       const newTask: Task = {
         id: crypto.randomUUID(),
@@ -228,6 +231,7 @@ export function useTasks(): UseTasksResult {
         status,
         important,
         scope,
+        estimateMinutes: estimateMinutes ?? null,
         createdAt: new Date().toISOString(),
         completedAt: status === "done" ? new Date().toISOString() : null,
       };
@@ -258,6 +262,7 @@ export function useTasks(): UseTasksResult {
         status,
         important,
         scope,
+        estimateMinutes,
       }: EditTaskInput,
     ): Promise<void> {
       let nextTask: Task | null = null;
@@ -275,6 +280,7 @@ export function useTasks(): UseTasksResult {
             status,
             important,
             scope,
+            estimateMinutes: estimateMinutes ?? null,
             completedAt:
               status === "done"
                 ? (task.completedAt ?? new Date().toISOString())

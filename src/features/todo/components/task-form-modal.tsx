@@ -32,6 +32,7 @@ interface TaskFormValues {
   status: TaskStatus;
   important: boolean;
   scope: TaskScope;
+  estimateMinutes: number | null;
 }
 
 interface TaskFormModalProps {
@@ -67,6 +68,7 @@ export default function TaskFormModal({
   const [status, setStatus] = useState<TaskStatus>(DEFAULT_STATUS);
   const [isImportant, setIsImportant] = useState(false);
   const [scope, setScope] = useState<TaskScope>(null);
+  const [estimateMinutes, setEstimateMinutes] = useState<number | null>(null);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueTime, setDueTime] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -81,6 +83,7 @@ export default function TaskFormModal({
       setStatus(task.status);
       setIsImportant(task.important);
       setScope(task.scope);
+      setEstimateMinutes(task.estimateMinutes);
       setDueDate(task.dueDate ? parseIsoDate(task.dueDate) : undefined);
       setDueTime(task.dueTime ?? "");
       return;
@@ -90,6 +93,7 @@ export default function TaskFormModal({
     setStatus(DEFAULT_STATUS);
     setIsImportant(false);
     setScope(null);
+    setEstimateMinutes(null);
     setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
     // Khi tạo mới có initialDate (hôm nay hoặc bất kỳ) → điền sẵn giờ hiện tại
     // (làm tròn lên 5 phút). Edit giữ giờ của task, không động vào.
@@ -101,6 +105,7 @@ export default function TaskFormModal({
     setStatus(DEFAULT_STATUS);
     setIsImportant(false);
     setScope(null);
+    setEstimateMinutes(null);
     setDueDate(undefined);
     setDueTime("");
   }
@@ -138,6 +143,7 @@ export default function TaskFormModal({
       status,
       important: isImportant,
       scope,
+      estimateMinutes: estimateMinutes && estimateMinutes > 0 ? estimateMinutes : null,
     });
     resetForm();
     onOpenChange(false);
@@ -246,6 +252,26 @@ export default function TaskFormModal({
                 );
               })}
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="task-estimate">Ước lượng thời gian (phút)</Label>
+            <Input
+              id="task-estimate"
+              type="number"
+              min={1}
+              value={estimateMinutes ?? ""}
+              onChange={(event) => {
+                const raw = event.target.value;
+                if (raw === "") {
+                  setEstimateMinutes(null);
+                  return;
+                }
+                const parsed = Number(raw);
+                setEstimateMinutes(Number.isFinite(parsed) && parsed > 0 ? parsed : null);
+              }}
+              placeholder="Ví dụ: 30, 60, 120..."
+            />
           </div>
 
           {scope === null && (

@@ -18,7 +18,11 @@ export function migrateTasks(loaded: Task[]): Task[] {
   return loaded.map((task) => {
     const legacy = task as unknown as LegacyTaskShape;
 
-    const knownTask = task as unknown as { important?: boolean; scope?: TaskScope };
+    const knownTask = task as unknown as {
+      important?: boolean;
+      scope?: TaskScope;
+      estimateMinutes?: number | null;
+    };
 
     if (legacy.status) {
       return {
@@ -27,6 +31,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
         dueTime: legacy.dueTime ?? null,
         important: knownTask.important ?? false,
         scope: knownTask.scope ?? null,
+        estimateMinutes: knownTask.estimateMinutes ?? null,
       };
     }
 
@@ -41,6 +46,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
       status,
       important: false,
       scope: null,
+      estimateMinutes: null,
       createdAt: legacy.createdAt ?? new Date().toISOString(),
       completedAt: legacy.completedAt ?? null,
     };

@@ -1,4 +1,5 @@
 import { daysFromToday } from "../../../utils/date";
+import { formatEstimate } from "../../todo/utils/format-estimate";
 import type { Task, TaskScope } from "../../todo/types/task";
 
 export type AlertTone = "overdue" | "today" | "soon" | "important" | "week" | "month";
@@ -24,9 +25,18 @@ function toneOf(diff: number): AlertTone {
   return "soon";
 }
 
-// Ngày đã hiện ở nhãn inline trong AlertItem nên message chỉ giữ tiêu đề + giờ.
-function todoMessage(title: string, time: string | null): string {
-  return time ? `${title} · ${time}` : title;
+// Ngày đã hiện ở nhãn inline trong AlertItem nên message chỉ giữ tiêu đề + giờ + ước lượng.
+function todoMessage(
+  title: string,
+  time: string | null,
+  estimate: number | null,
+): string {
+  const estimateText = formatEstimate(estimate);
+  let message = title;
+  if (time) message += ` · ${time}`;
+  if (estimateText) message += ` (${estimateText})`;
+
+  return message;
 }
 
 // Thứ tự: quá hạn → hôm nay → ngày mai → important/scope → ngày mốt (cuối cùng).
@@ -48,7 +58,7 @@ export function buildImportantAlerts(tasks: Task[]): AlertItem[] {
         return {
           key: `todo-${task.id}`,
           sourceId: task.id,
-          message: task.title,
+          message: todoMessage(task.title, null, task.estimateMinutes),
           tone: "important",
           diff: Infinity,
           time: null,
@@ -63,7 +73,7 @@ export function buildImportantAlerts(tasks: Task[]): AlertItem[] {
       return {
         key: `todo-${task.id}`,
         sourceId: task.id,
-        message: todoMessage(task.title, task.dueTime),
+        message: todoMessage(task.title, task.dueTime, task.estimateMinutes),
         tone: toneOf(diff),
         diff,
         time: task.dueTime,
@@ -93,7 +103,7 @@ export function buildAlerts(tasks: Task[]): AlertItem[] {
       items.push({
         key: `todo-${task.id}`,
         sourceId: task.id,
-        message: task.title,
+        message: todoMessage(task.title, null, task.estimateMinutes),
         tone: "important",
         diff: Infinity,
         time: null,
@@ -107,7 +117,7 @@ export function buildAlerts(tasks: Task[]): AlertItem[] {
       items.push({
         key: `todo-${task.id}`,
         sourceId: task.id,
-        message: todoMessage(task.title, task.dueTime),
+        message: todoMessage(task.title, task.dueTime, task.estimateMinutes),
         tone: toneOf(diff),
         diff,
         time: task.dueTime,
@@ -130,7 +140,7 @@ export function buildAlerts(tasks: Task[]): AlertItem[] {
     items.push({
       key: `todo-${task.id}`,
       sourceId: task.id,
-      message: todoMessage(task.title, task.dueTime),
+      message: todoMessage(task.title, task.dueTime, task.estimateMinutes),
       tone: toneOf(diff),
       diff,
       time: task.dueTime,
@@ -148,7 +158,7 @@ export function buildAlerts(tasks: Task[]): AlertItem[] {
     items.push({
       key: `todo-${task.id}`,
       sourceId: task.id,
-      message: task.title,
+      message: todoMessage(task.title, null, task.estimateMinutes),
       tone: task.scope,
       diff: Infinity,
       time: null,

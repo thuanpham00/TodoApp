@@ -11,9 +11,13 @@ create table if not exists tasks (
   status text not null check (status in ('backlog','todo','doing','done')),
   important boolean not null default false,
   scope text check (scope in ('week','month') or scope is null),
+  estimate_minutes int,
   created_at timestamptz not null,
   completed_at timestamptz
 );
+
+-- Nếu bảng đã tồn tại trước khi thêm cột estimate_minutes thì chạy thêm:
+-- alter table tasks add column if not exists estimate_minutes int;
 
 -- Habits
 create table if not exists habits (

@@ -102,7 +102,7 @@ export default function DayTimeline({
         <div
           className="relative grid"
           style={{
-            gridTemplateColumns: "40px 1fr",
+            gridTemplateColumns: "56px 1fr",
           }}
         >
           {/* Cột label giờ */}
@@ -112,7 +112,7 @@ export default function DayTimeline({
               (_, index) => (
                 <div
                   key={index}
-                  className="relative flex items-start justify-end pr-1 text-[10px] text-muted sm:pr-2 sm:text-xs"
+                  className="relative flex items-start justify-end pr-2 text-xs text-muted"
                   style={{ height: `${HOUR_HEIGHT_PX}px` }}
                 >
                   <span className="-translate-y-1.5 bg-background px-1">

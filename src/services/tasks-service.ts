@@ -10,6 +10,7 @@ interface TaskRow {
   status: Task["status"];
   important: boolean;
   scope: Task["scope"];
+  estimate_minutes: number | null;
   created_at: string;
   completed_at: string | null;
 }
@@ -24,6 +25,7 @@ function rowToTask(row: TaskRow): Task {
     status: row.status,
     important: row.important,
     scope: row.scope,
+    estimateMinutes: row.estimate_minutes ?? null,
     createdAt: row.created_at,
     completedAt: row.completed_at,
   };
@@ -39,6 +41,7 @@ function taskToRow(task: Task): TaskRow {
     status: task.status,
     important: task.important,
     scope: task.scope,
+    estimate_minutes: task.estimateMinutes,
     created_at: task.createdAt,
     completed_at: task.completedAt,
   };

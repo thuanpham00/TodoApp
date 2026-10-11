@@ -93,6 +93,7 @@ export default function TodoWidget() {
             status: values.status ?? "todo",
             important: values.important ?? false,
             scope: values.scope ?? null,
+            estimateMinutes: values.estimateMinutes ?? null,
           });
         } else {
           // Ép status mặc định là "todo" khi tạo mới để task mới không rơi vào "backlog".

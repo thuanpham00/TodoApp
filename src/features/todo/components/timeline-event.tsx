@@ -1,5 +1,6 @@
 import { STATUS_CHIP_CLASS } from "../constants/kanban-columns";
 import type { Task } from "../types/task";
+import { formatEstimate } from "../utils/format-estimate";
 import {
   HOUR_HEIGHT_PX,
   MIN_EVENT_HEIGHT_PX,
@@ -47,6 +48,9 @@ export default function TimelineEvent({ event, onEdit }: TimelineEventProps) {
       </div>
       {height > 50 && task.description && (
         <p className="mt-0.5 truncate opacity-80">{task.description}</p>
+      )}
+      {height > 50 && task.estimateMinutes && (
+        <p className="mt-0.5 opacity-70">{formatEstimate(task.estimateMinutes)}</p>
       )}
     </button>
   );
