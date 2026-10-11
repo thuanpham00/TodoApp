@@ -32,14 +32,14 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="flex min-h-dvh w-full flex-col p-2 sm:p-3 lg:p-4">
+    <div className="flex min-h-dvh w-full flex-col p-2 pb-safe pt-safe sm:p-3 sm:pb-safe sm:pt-safe lg:p-4 lg:pb-safe lg:pt-safe">
       <div
         className={cn(
           "flex flex-1 flex-col gap-3 rounded-3xl p-2 ring-1 ring-border-card backdrop-blur-xl sm:p-3 lg:p-4",
           isPlainBackground ? "bg-surface/90" : "bg-surface/55",
         )}
       >
-        <header className="sticky top-0 z-30 mb-3 flex items-center justify-between gap-2 rounded-full bg-surface/90 p-1.5 px-3 ring-1 ring-border-card backdrop-blur-md sm:p-2 sm:px-4">
+        <header className="sticky top-0 z-30 mb-3 flex items-center justify-between gap-2 rounded-full bg-surface/90 p-1.5 px-3 pt-[calc(env(safe-area-inset-top,0px)+0.375rem)] ring-1 ring-border-card backdrop-blur-md sm:p-2 sm:px-4 sm:pt-[calc(env(safe-area-inset-top,0px)+0.5rem)]">
           <GreetingHeader name={settings.boardName} />
           <Button
             variant="primary"

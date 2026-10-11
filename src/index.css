@@ -135,6 +135,13 @@ body {
   .mb-safe {
     margin-bottom: env(safe-area-inset-bottom, 0);
   }
+  /* Padding động theo safe-area: dùng calc với padding hiện có. */
+  .pt-safe-double {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+  }
+  .pb-safe-double {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
   /* Dynamic viewport height: chính xác kể cả khi toolbar Safari ẩn/hiện. */
   .h-dvh {
     height: 100dvh;
