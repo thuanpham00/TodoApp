@@ -51,34 +51,37 @@ export default function AlertItem({ item }: AlertItemProps) {
   const dateLabel = item.dueDate ? formatAlertDate(item.dueDate) : null;
 
   return (
-    <li className="flex items-center gap-3 rounded-lg px-1 py-2">
+    <li className="flex items-start gap-3 rounded-lg px-1 py-2">
       <span
-        className={cn("h-2 w-2 shrink-0 rounded-full", getDotClass(item))}
+        className={cn("h-2 w-2 shrink-0 translate-y-1.5 rounded-full", getDotClass(item))}
       />
 
-      <div className="flex min-w-0 flex-1 items-center gap-2">
-        {dateLabel && (
-          <span className="shrink-0 text-sm text-brand">{dateLabel}</span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        {(dateLabel || badges.length > 0) && (
+          <div className="flex flex-wrap items-center gap-2">
+            {dateLabel && (
+              <span className="shrink-0 text-sm text-brand">{dateLabel}</span>
+            )}
+            {badges.map((badge) => (
+              <span
+                key={badge.key}
+                className={cn(
+                  "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium",
+                  badge.className,
+                )}
+              >
+                {badge.label}
+              </span>
+            ))}
+          </div>
         )}
 
         <p
           title={item.message}
-          className="min-w-0 shrink truncate text-sm text-foreground"
+          className="break-words text-sm text-foreground"
         >
           {item.message}
         </p>
-
-        {badges.map((badge) => (
-          <span
-            key={badge.key}
-            className={cn(
-              "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium",
-              badge.className,
-            )}
-          >
-            {badge.label}
-          </span>
-        ))}
       </div>
     </li>
   );

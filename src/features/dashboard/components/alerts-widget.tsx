@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import WidgetCard from "../../../components/widget-card/widget-card";
 import { useTasks } from "../../todo/hooks/use-tasks";
-import { buildAlerts } from "../utils/build-alerts";
+import { buildImportantAlerts } from "../utils/build-alerts";
 import AlertItem from "./alert-item";
 
 interface AlertsWidgetProps {
@@ -11,7 +11,7 @@ interface AlertsWidgetProps {
 export default function AlertsWidget({ className }: AlertsWidgetProps = {}) {
   const { tasks, isLoading } = useTasks();
 
-  const alerts = useMemo(() => buildAlerts(tasks), [tasks]);
+  const alerts = useMemo(() => buildImportantAlerts(tasks), [tasks]);
 
   return (
     <WidgetCard

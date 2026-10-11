@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useSyncExternalStore,
+} from "react";
 import { TASK_STATUS_ORDER } from "../constants/kanban-columns";
 import type { Task, TaskScope, TaskStatus } from "../types/task";
 import { autoBacklogOverdueTasks } from "../utils/auto-backlog-overdue";
@@ -95,51 +100,92 @@ function getAdjacentStatus(
   return TASK_STATUS_ORDER[nextIndex];
 }
 
+// --- Module-level singleton state ---------------------------------------
+// Mọi component gọi useTasks() đều dùng chung state này, đảm bảo UI đồng bộ
+// giữa các widget mà không cần context provider.
+
+interface TasksStoreState {
+  tasks: Task[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+let storeState: TasksStoreState = {
+  tasks: [],
+  isLoading: true,
+  error: null,
+};
+
+const listeners = new Set<() => void>();
+let initStarted = false;
+
+function setStoreState(next: Partial<TasksStoreState>): void {
+  storeState = { ...storeState, ...next };
+  for (const listener of listeners) listener();
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot(): TasksStoreState {
+  return storeState;
+}
+
+function getServerSnapshot(): TasksStoreState {
+  return storeState;
+}
+
+async function loadAll(): Promise<void> {
+  try {
+    const loaded = await fetchAllTasks();
+    setStoreState({ tasks: migrateTasks(loaded), error: null, isLoading: false });
+  } catch (err: unknown) {
+    setStoreState({
+      error: err instanceof Error ? err.message : "Không tải được tasks",
+      isLoading: false,
+    });
+  }
+}
+
+function ensureInitialized(): void {
+  if (initStarted) return;
+  initStarted = true;
+  void loadAll();
+}
+
 export function useTasks(): UseTasksResult {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const tasksByStatus = useMemo(() => groupByStatus(tasks), [tasks]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    fetchAllTasks()
-      .then((loaded) => {
-        if (!isMounted) return;
-        setTasks(migrateTasks(loaded));
-        setError(null);
-      })
-      .catch((err: unknown) => {
-        if (!isMounted) return;
-        setError(err instanceof Error ? err.message : "Không tải được tasks");
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // Auto-backlog overdue: chạy trên state local, rồi đồng bộ cloud.
-  const persistOverdue = useCallback(
-    async function persistOverdue(): Promise<void> {
-      const updated = autoBacklogOverdueTasks(tasks);
-      if (updated === tasks) return;
-
-      setTasks(updated);
-      await Promise.all(updated.map((task) => upsertTask(task)));
-    },
-    [tasks],
+  const snapshot = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
   );
 
+  // Trigger initial fetch ở lần đầu tiên hook được dùng (global guard bên trên
+  // đảm bảo chỉ fetch 1 lần dù nhiều component mount).
   useEffect(() => {
-    if (isLoading) return;
+    ensureInitialized();
+  }, []);
 
-    persistOverdue();
+  // Auto-backlog overdue: chạy 1 lần sau khi load xong, rồi lặp lại lúc nửa đêm.
+  useEffect(() => {
+    if (snapshot.isLoading) return;
+
+    const runOverdue = async (): Promise<void> => {
+      const current = getSnapshot().tasks;
+      const updated = autoBacklogOverdueTasks(current);
+      if (updated === current) return;
+
+      setStoreState({ tasks: updated });
+      await Promise.all(updated.map((task) => upsertTask(task)));
+      // Refetch để đồng bộ với cloud sau khi ghi overdue.
+      await loadAll();
+    };
+
+    void runOverdue();
 
     const now = new Date();
     const nextMidnight = new Date(
@@ -153,10 +199,15 @@ export function useTasks(): UseTasksResult {
     );
     const ms = nextMidnight.getTime() - now.getTime();
     const id = window.setTimeout(() => {
-      void persistOverdue();
+      void runOverdue();
     }, ms);
     return () => window.clearTimeout(id);
-  }, [isLoading, persistOverdue]);
+  }, [snapshot.isLoading]);
+
+  const tasksByStatus = useMemo(
+    () => groupByStatus(snapshot.tasks),
+    [snapshot.tasks],
+  );
 
   const addTask = useCallback(
     async function addTask({
@@ -181,11 +232,15 @@ export function useTasks(): UseTasksResult {
         completedAt: status === "done" ? new Date().toISOString() : null,
       };
 
-      setTasks((prev) => [newTask, ...prev]);
+      setStoreState({ tasks: [newTask, ...storeState.tasks] });
       try {
         await upsertTask(newTask);
+        // Refetch để chắc chắn UI khớp với cloud (id, timestamps, ...).
+        await loadAll();
       } catch (err) {
-        setTasks((prev) => prev.filter((t) => t.id !== newTask.id));
+        setStoreState({
+          tasks: storeState.tasks.filter((t) => t.id !== newTask.id),
+        });
         throw err;
       }
     },
@@ -195,13 +250,21 @@ export function useTasks(): UseTasksResult {
   const editTask = useCallback(
     async function editTask(
       id: string,
-      { title, description, dueDate, dueTime, status, important, scope }: EditTaskInput,
+      {
+        title,
+        description,
+        dueDate,
+        dueTime,
+        status,
+        important,
+        scope,
+      }: EditTaskInput,
     ): Promise<void> {
       let nextTask: Task | null = null;
-      const prevSnapshot = tasks;
+      const prevSnapshot = storeState.tasks;
 
-      setTasks((prev) =>
-        prev.map((task) => {
+      setStoreState({
+        tasks: storeState.tasks.map((task) => {
           if (task.id !== id) return task;
           nextTask = {
             ...task,
@@ -219,27 +282,31 @@ export function useTasks(): UseTasksResult {
           };
           return nextTask;
         }),
-      );
+      });
 
       if (!nextTask) return;
 
       try {
         await upsertTask(nextTask);
+        await loadAll();
       } catch (err) {
-        setTasks(prevSnapshot);
+        setStoreState({ tasks: prevSnapshot });
         throw err;
       }
     },
-    [tasks],
+    [],
   );
 
   const moveTask = useCallback(
-    async function moveTask(id: string, direction: MoveDirection): Promise<void> {
-      const prevSnapshot = tasks;
+    async function moveTask(
+      id: string,
+      direction: MoveDirection,
+    ): Promise<void> {
+      const prevSnapshot = storeState.tasks;
       let nextTask: Task | null = null;
 
-      setTasks((prev) =>
-        prev.map((task) => {
+      setStoreState({
+        tasks: storeState.tasks.map((task) => {
           if (task.id !== id) return task;
           const nextStatus = getAdjacentStatus(task.status, direction);
           if (!nextStatus) return task;
@@ -250,39 +317,43 @@ export function useTasks(): UseTasksResult {
           };
           return nextTask;
         }),
-      );
+      });
 
       if (!nextTask) return;
 
       try {
         await upsertTask(nextTask);
+        await loadAll();
       } catch (err) {
-        setTasks(prevSnapshot);
+        setStoreState({ tasks: prevSnapshot });
         throw err;
       }
     },
-    [tasks],
+    [],
   );
 
   const deleteTask = useCallback(
     async function deleteTask(id: string): Promise<void> {
-      const prevSnapshot = tasks;
-      setTasks((prev) => prev.filter((task) => task.id !== id));
+      const prevSnapshot = storeState.tasks;
+      setStoreState({
+        tasks: storeState.tasks.filter((task) => task.id !== id),
+      });
       try {
         await deleteTaskById(id);
+        await loadAll();
       } catch (err) {
-        setTasks(prevSnapshot);
+        setStoreState({ tasks: prevSnapshot });
         throw err;
       }
     },
-    [tasks],
+    [],
   );
 
   return {
-    tasks,
+    tasks: snapshot.tasks,
     tasksByStatus,
-    isLoading,
-    error,
+    isLoading: snapshot.isLoading,
+    error: snapshot.error,
     addTask,
     editTask,
     moveTask,

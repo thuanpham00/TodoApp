@@ -38,7 +38,7 @@ export default function TaskCard({
   return (
     <li className="rounded-xl bg-surface p-3 ring-1 ring-border-card sm:p-4">
       <div className="flex items-start gap-1.5">
-        <p className="flex-1 text-sm font-medium text-foreground">{task.title}</p>
+        <p className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">{task.title}</p>
         {task.important && (
           <Flame className="h-4 w-4 shrink-0 fill-orange-500 text-orange-500" />
         )}

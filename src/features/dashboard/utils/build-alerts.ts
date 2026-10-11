@@ -29,6 +29,56 @@ function todoMessage(title: string, time: string | null): string {
   return time ? `${title} · ${time}` : title;
 }
 
+// Thứ tự: quá hạn → hôm nay → ngày mai → important/scope → ngày mốt (cuối cùng).
+function sortKey(item: AlertItem): number {
+  if (item.diff < 0) return 0;
+  if (item.diff === 0) return 1;
+  if (item.diff === 1) return 2;
+  if (!isFinite(item.diff)) return 3;
+
+  return 4;
+}
+
+export function buildImportantAlerts(tasks: Task[]): AlertItem[] {
+  // Chỉ lấy task đánh dấu quan trọng và chưa hoàn thành.
+  return tasks
+    .filter((task) => task.important && task.status !== "done")
+    .map<AlertItem>((task) => {
+      if (!task.dueDate) {
+        return {
+          key: `todo-${task.id}`,
+          sourceId: task.id,
+          message: task.title,
+          tone: "important",
+          diff: Infinity,
+          time: null,
+          dueDate: null,
+          isImportant: true,
+          scope: task.scope,
+        };
+      }
+
+      const diff = daysFromToday(task.dueDate);
+
+      return {
+        key: `todo-${task.id}`,
+        sourceId: task.id,
+        message: todoMessage(task.title, task.dueTime),
+        tone: toneOf(diff),
+        diff,
+        time: task.dueTime,
+        dueDate: task.dueDate,
+        isImportant: true,
+        scope: task.scope,
+      };
+    })
+    .sort(
+      (first, second) =>
+        sortKey(first) - sortKey(second) ||
+        (first.time ?? "99:99").localeCompare(second.time ?? "99:99"),
+    );
+}
+
 export function buildAlerts(tasks: Task[]): AlertItem[] {
   const items: AlertItem[] = [];
   const includedTaskIds = new Set<string>();
@@ -106,16 +156,6 @@ export function buildAlerts(tasks: Task[]): AlertItem[] {
       isImportant: false,
       scope: task.scope,
     });
-  }
-
-  // Thứ tự: quá hạn → hôm nay → ngày mai → important/scope → ngày mốt (cuối cùng).
-  function sortKey(item: AlertItem): number {
-    if (item.diff < 0) return 0;
-    if (item.diff === 0) return 1;
-    if (item.diff === 1) return 2;
-    if (!isFinite(item.diff)) return 3;
-
-    return 4;
   }
 
   return items.sort(
