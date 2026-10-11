@@ -157,10 +157,10 @@ export default function CloudSyncButton() {
   if (status === "hidden" || status === "checking") return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-xs rounded-xl border border-border-card bg-surface p-3 shadow-lg">
+    <div className="fixed bottom-3 right-3 left-3 z-50 rounded-xl border border-border-card bg-surface p-3 shadow-lg sm:left-auto sm:max-w-xs">
       <div className="flex items-start gap-2">
         <CloudUpload className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
-        <div className="min-w-0 flex-1 text-sm">
+        <div className="min-w-0 flex-1 text-xs sm:text-sm">
           {status === "ready" && (
             <>
               <p className="font-medium text-foreground">Đồng bộ lên cloud?</p>

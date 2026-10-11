@@ -3,6 +3,18 @@
 Web app dashboard cá nhân: todo (kanban / calendar / timeline), thói quen, nhắc
 việc, ghi chú, lời chào theo giờ. Data lưu trên **Supabase** (Postgres).
 
+## Responsive
+
+App thiết kế **mobile-first**, chạy tốt trên điện thoại, tablet và desktop:
+
+- **Mobile (< 640px)**: 1 cột, toolbar dạng icon-only, kanban cuộn ngang có
+  snap + dot indicator, modal full-screen.
+- **Tablet (640–1023px)**: 1 cột rộng hơn, toolbar có label.
+- **Desktop (≥ 1024px)**: 3 cột (Todo chiếm 2/3, Quan trọng + Thói quen 1/3).
+
+Touch target ≥ 36px trên mobile, hỗ trợ `viewport-fit=cover` cho iOS notch /
+home indicator.
+
 ## Tech stack
 
 - React 18 + Vite 5 + TypeScript + Tailwind CSS v4.

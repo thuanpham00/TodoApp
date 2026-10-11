@@ -54,18 +54,18 @@ export default function HabitItem({
         </button>
       )}
 
-      <div className="flex items-center gap-0.5">
+      <div className="flex shrink-0 items-center gap-0.5">
         <IconButton
           icon={Pencil}
           label="Sửa thói quen"
           onClick={startEdit}
-          className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
+          className="h-7 w-7 opacity-100 sm:pointer-events-none sm:opacity-0 sm:transition-opacity sm:group-hover:pointer-events-auto sm:group-hover:opacity-100"
         />
         <IconButton
           icon={Trash2}
           label="Xoá thói quen"
           onClick={() => onDelete(habit.id)}
-          className="pointer-events-none opacity-0 transition-opacity hover:text-rose-500 group-hover:pointer-events-auto group-hover:opacity-100"
+          className="h-7 w-7 opacity-100 hover:text-rose-500 sm:pointer-events-none sm:opacity-0 sm:transition-opacity sm:group-hover:pointer-events-auto sm:group-hover:opacity-100"
         />
       </div>
     </li>

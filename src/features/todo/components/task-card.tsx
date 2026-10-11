@@ -36,7 +36,7 @@ export default function TaskCard({
   const canMoveNext = statusIndex < TASK_STATUS_ORDER.length - 1;
 
   return (
-    <li className="rounded-xl bg-surface p-3 ring-1 ring-border-card">
+    <li className="rounded-xl bg-surface p-3 ring-1 ring-border-card sm:p-4">
       <div className="flex items-start gap-1.5">
         <p className="flex-1 text-sm font-medium text-foreground">{task.title}</p>
         {task.important && (
@@ -70,24 +70,31 @@ export default function TaskCard({
         )}
       </div>
 
-      <div className="mt-2 flex items-center justify-end gap-0.5 border-t border-border-card pt-2">
-        <IconButton icon={Pencil} label="Sửa task" onClick={() => onEdit(task)} />
+      <div className="mt-2 flex items-center justify-end gap-0.5 border-t border-border-card pt-2 sm:gap-1">
+        <IconButton
+          icon={Pencil}
+          label="Sửa task"
+          onClick={() => onEdit(task)}
+          className="h-9 w-9 sm:h-7 sm:w-7"
+        />
         <IconButton
           icon={ChevronLeft}
           label="Chuyển sang cột trước"
           disabled={!canMovePrev}
           onClick={() => onMove(task.id, "prev")}
+          className="h-9 w-9 sm:h-7 sm:w-7"
         />
         <IconButton
           icon={ChevronRight}
           label="Chuyển sang cột sau"
           disabled={!canMoveNext}
           onClick={() => onMove(task.id, "next")}
+          className="h-9 w-9 sm:h-7 sm:w-7"
         />
         <IconButton
           icon={Trash2}
           label="Xoá task"
-          className="hover:text-rose-500"
+          className="h-9 w-9 hover:text-rose-500 sm:h-7 sm:w-7"
           onClick={() => onDelete(task.id)}
         />
       </div>

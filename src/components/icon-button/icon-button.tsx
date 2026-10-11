@@ -20,7 +20,8 @@ export default function IconButton({
       aria-label={label}
       title={label}
       className={cn(
-        "inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-muted transition-colors",
+        // Mobile: tap area lớn (h-9 w-9). Desktop: nhỏ gọn hơn (h-7 w-7).
+        "inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted transition-colors sm:h-7 sm:w-7",
         "hover:bg-background hover:text-foreground",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
         "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-muted",

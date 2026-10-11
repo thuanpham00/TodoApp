@@ -4,7 +4,11 @@ import { useTasks } from "../../todo/hooks/use-tasks";
 import { buildAlerts } from "../utils/build-alerts";
 import AlertItem from "./alert-item";
 
-export default function AlertsWidget() {
+interface AlertsWidgetProps {
+  className?: string;
+}
+
+export default function AlertsWidget({ className }: AlertsWidgetProps = {}) {
   const { tasks, isLoading } = useTasks();
 
   const alerts = useMemo(() => buildAlerts(tasks), [tasks]);
@@ -21,7 +25,7 @@ export default function AlertsWidget() {
           className="h-5 w-5 object-contain"
         />
       }
-      className="flex-1 min-h-0"
+      className={`min-h-0 ${className ?? "flex-1"}`}
       bodyClassName="scrollbar-clean overflow-y-auto"
     >
       {isLoading ? (

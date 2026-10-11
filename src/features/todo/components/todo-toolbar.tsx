@@ -41,8 +41,13 @@ export default function TodoToolbar({
   const hiddenCount = hiddenColumns.size;
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center rounded-lg bg-background p-0.5">
+    <div className="flex w-full flex-wrap items-center justify-end gap-1.5 sm:w-auto sm:flex-nowrap sm:gap-2">
+      {/* View switcher: icon-only trên mobile, có label từ sm: */}
+      <div
+        role="tablist"
+        aria-label="Chế độ xem"
+        className="flex items-center rounded-lg bg-background p-0.5"
+      >
         {VIEW_OPTIONS.map((option) => {
           const isActive = view === option.key;
           const Icon = option.icon;
@@ -51,15 +56,19 @@ export default function TodoToolbar({
             <button
               key={option.key}
               type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-label={option.label}
+              title={option.label}
               onClick={() => onViewChange(option.key)}
               className={cn(
-                "inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+                "inline-flex min-h-9 min-w-9 cursor-pointer items-center justify-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors sm:min-h-0 sm:min-w-0 sm:px-2.5",
                 isActive && "bg-surface text-foreground shadow-sm",
                 !isActive && "text-muted hover:text-foreground",
               )}
             >
-              <Icon className="h-3.5 w-3.5" />
-              {option.label}
+              <Icon className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+              <span className="hidden sm:inline">{option.label}</span>
             </button>
           );
         })}
@@ -70,15 +79,17 @@ export default function TodoToolbar({
           <PopoverTrigger asChild>
             <button
               type="button"
+              aria-label="Tuỳ chỉnh cột"
+              title="Tuỳ chỉnh cột"
               className={cn(
-                "inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-input px-2.5 py-1.5 text-xs font-medium transition-colors hover:text-foreground",
+                "inline-flex min-h-9 min-w-9 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-input px-2.5 py-1.5 text-xs font-medium transition-colors hover:text-foreground sm:min-h-0 sm:min-w-0",
                 hiddenCount > 0 ? "text-foreground" : "text-muted-foreground",
               )}
             >
-              <Columns3 className="h-3.5 w-3.5" />
-              Cột
+              <Columns3 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+              <span className="hidden sm:inline">Cột</span>
               {hiddenCount > 0 && (
-                <span className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] text-background leading-none">
+                <span className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] leading-none text-background">
                   {KANBAN_COLUMNS.length - hiddenCount}/{KANBAN_COLUMNS.length}
                 </span>
               )}
@@ -124,9 +135,14 @@ export default function TodoToolbar({
         </Popover>
       )}
 
-      <Button onClick={onAddClick} className="rounded-full px-3 py-1.5">
+      <Button
+        onClick={onAddClick}
+        aria-label="Thêm task"
+        title="Thêm task"
+        className="rounded-full px-3 py-1.5"
+      >
         <Plus className="h-4 w-4" />
-        Thêm task
+        <span className="hidden sm:inline">Thêm task</span>
       </Button>
     </div>
   );

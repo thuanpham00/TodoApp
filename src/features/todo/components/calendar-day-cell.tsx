@@ -49,7 +49,7 @@ export default function CalendarDayCell({
             )}
           >
             {task.dueTime && (
-              <span className="font-semibold">{task.dueTime} </span>
+              <span className="hidden font-semibold sm:inline">{task.dueTime} </span>
             )}
             {task.title}
           </span>

@@ -3,7 +3,11 @@ import { useHabits } from "../hooks/use-habits";
 import AddHabitForm from "./add-habit-form";
 import HabitItem from "./habit-item";
 
-export default function HabitsWidget() {
+interface HabitsWidgetProps {
+  className?: string;
+}
+
+export default function HabitsWidget({ className }: HabitsWidgetProps = {}) {
   const { habits, isLoading, addHabit, renameHabit, deleteHabit } = useHabits();
 
   return (
@@ -18,7 +22,7 @@ export default function HabitsWidget() {
           className="h-5 w-5 object-contain"
         />
       }
-      className="flex-1 min-h-0"
+      className={`min-h-0 ${className ?? "flex-1"}`}
       bodyClassName="flex min-h-0 flex-col"
     >
       {isLoading ? (

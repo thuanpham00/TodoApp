@@ -21,14 +21,14 @@ export default function WidgetCard({
   return (
     <section
       className={cn(
-        "flex flex-col rounded-2xl bg-surface p-5 ring-1 ring-border-card",
+        "flex flex-col rounded-2xl bg-surface p-4 ring-1 ring-border-card sm:p-5",
         className,
       )}
     >
-      <header className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+      <header className="mb-3 flex items-center justify-between gap-2 sm:mb-4 sm:gap-3">
+        <div className="flex min-w-0 items-center gap-2">
           {icon}
-          <h2 className="text-base font-semibold text-foreground">{title}</h2>
+          <h2 className="truncate text-base font-semibold text-foreground">{title}</h2>
         </div>
         {action}
       </header>

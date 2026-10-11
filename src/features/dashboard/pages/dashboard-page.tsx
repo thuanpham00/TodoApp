@@ -32,32 +32,32 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full flex-col p-3">
+    <div className="flex min-h-dvh w-full flex-col p-2 sm:p-3 lg:p-4">
       <div
         className={cn(
-          "flex flex-1 flex-col rounded-3xl p-3 ring-1 ring-border-card backdrop-blur-xl sm:p-4",
+          "flex flex-1 flex-col gap-3 rounded-3xl p-2 ring-1 ring-border-card backdrop-blur-xl sm:p-3 lg:p-4",
           isPlainBackground ? "bg-surface/90" : "bg-surface/55",
         )}
       >
-        <header className="mb-3 flex items-center justify-between rounded-full bg-surface p-2 px-4 ring-1 ring-border-card">
+        <header className="sticky top-0 z-30 mb-3 flex items-center justify-between gap-2 rounded-full bg-surface/90 p-1.5 px-3 ring-1 ring-border-card backdrop-blur-md sm:p-2 sm:px-4">
           <GreetingHeader name={settings.boardName} />
           <Button
             variant="primary"
-            className="rounded-full"
+            className="rounded-full px-2.5 py-1.5 sm:px-4 sm:py-2"
             onClick={() => setIsSettingsOpen(true)}
           >
             <Settings className="h-4 w-4" />
-            Cài đặt
+            <span className="hidden sm:inline">Cài đặt</span>
           </Button>
         </header>
 
-        <div className="grid flex-1 gap-3 lg:grid-cols-3">
-          <div className="flex h-full flex-col lg:col-span-2 min-h-0">
+        <div className="grid gap-3 lg:flex-1 lg:grid-cols-3">
+          <div className="order-1 flex min-h-0 flex-col lg:col-span-2 lg:h-full">
             <TodoWidget />
           </div>
-          <div className="flex h-full min-h-0 flex-col gap-3">
-            <AlertsWidget />
-            <HabitsWidget />
+          <div className="order-2 flex min-h-0 flex-col gap-3 lg:order-2 lg:h-full">
+            <AlertsWidget className="shrink-0 lg:flex-1" />
+            <HabitsWidget className="shrink-0 lg:flex-1" />
           </div>
         </div>
       </div>
