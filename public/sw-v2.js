@@ -1,6 +1,6 @@
 // Service Worker cho PWA - cache shell để offline + mở app nhanh
-const CACHE_NAME = "personal-tracker-v1";
-const SHELL_URLS = ["/", "/manifest.json", "/icons/cube.png"];
+const CACHE_NAME = "personal-tracker-v2";
+const SHELL_URLS = ["/", "/manifest.webmanifest", "/icons/cube.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -15,7 +15,9 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+          keys
+            .filter((k) => k !== CACHE_NAME && k.startsWith("personal-tracker"))
+            .map((k) => caches.delete(k))
         )
       )
       .then(() => self.clients.claim())
@@ -33,9 +35,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request).catch(() => caches.match("/"))
-    );
+    event.respondWith(fetch(request).catch(() => caches.match("/")));
     return;
   }
 

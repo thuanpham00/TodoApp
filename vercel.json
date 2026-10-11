@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/sw.js",
+      "source": "/sw-v2.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/manifest.json",
+      "source": "/manifest.webmanifest",
       "headers": [
         {
           "key": "Content-Type",

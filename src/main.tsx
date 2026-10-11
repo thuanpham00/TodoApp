@@ -19,7 +19,7 @@ createRoot(rootElement).render(
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
+      .register("/sw-v2.js")
       .then((reg) => console.log("[PWA] Service Worker registered:", reg.scope))
       .catch((err) => console.warn("[PWA] SW registration failed:", err));
   });
