@@ -39,7 +39,7 @@ export default function DashboardPage() {
           isPlainBackground ? "bg-surface/90" : "bg-surface/55",
         )}
       >
-        <header className="sticky top-0 z-30 mb-3 flex items-center justify-between gap-2 rounded-full bg-surface/90 p-1.5 px-3 pt-[max(env(safe-area-inset-top,0px),0.25rem)] ring-1 ring-border-card backdrop-blur-md sm:p-2 sm:px-4 sm:pt-[max(env(safe-area-inset-top,0px),0.25rem)]">
+        <header className="sticky top-0 z-30 mb-3 flex items-center justify-between gap-2 rounded-full bg-surface/90 p-1.5 px-3 pt-2 ring-1 ring-border-card backdrop-blur-md sm:p-2 sm:px-4 sm:pt-2.5">
           <GreetingHeader name={settings.boardName} />
           <Button
             variant="primary"

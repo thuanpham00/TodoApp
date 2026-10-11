@@ -104,8 +104,11 @@ body {
 
 body {
   /* Mặc định nền trơn theo token. Khi chọn ảnh, use-settings set biến
-     --bg-image để layer ảnh đè lên màu nền (nhất quán Safari mobile + PWA). */
+     --bg-image để layer ảnh đè lên màu nền (nhất quán Safari mobile + PWA).
+     padding-top = safe-area inset để content (header sticky) không bị
+     status bar PWA iOS đè lên. */
   --bg-image: none;
+  padding-top: env(safe-area-inset-top, 0px);
   background-color: var(--background);
   background-image: var(--bg-image);
   background-size: cover;
